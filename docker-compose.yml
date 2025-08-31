@@ -1,0 +1,37 @@
+version: "3.12"
+
+services:
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: on-failure
+    expose:
+      - "6379"
+
+  app:
+    container_name: app
+    build: .
+    tty: true
+    command: sh -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
+    ports:
+      - '8000:8000'
+    env_file:
+      - .env
+
+  db:
+    container_name: db
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: "PASSWORD"
+      POSTGRES_NAME: "NAME"
+    restart: on-failure
+    env_file:
+      - .env
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "-c", "pg_isready -U $USER -d $NAME"]
+      interval: 30s
+      retries: 5
+      timeout: 10s
