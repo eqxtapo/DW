@@ -100,19 +100,13 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Basic': {
-            'type': 'basic'
-        },
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header'
-        }
+    "SECURITY_DEFINITIONS": {
+        "Basic": {"type": "basic"},
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"},
     },
-    'USE_SESSION_AUTH': True,
-    'LOGIN_URL': 'admin:login',
-    'LOGOUT_URL': 'admin:logout',
+    "USE_SESSION_AUTH": True,
+    "LOGIN_URL": "admin:login",
+    "LOGOUT_URL": "admin:logout",
 }
 
 # Отключаем предупреждения о совместимости
