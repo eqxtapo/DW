@@ -1,12 +1,25 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock .
+# Устанавливаем системные зависимости включая PostgreSQL клиентские библиотеки
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl \
+    build-essential \
+    libpq-dev \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip install poetry && \
-    poetry config virtualenvs.create false && \
-    poetry install --no-root
+# Устанавливаем poetry
+RUN pip install --no-cache-dir poetry
+
+# Копируем файлы зависимостей
+COPY pyproject.toml poetry.lock ./
+
+# Настраиваем poetry и устанавливаем зависимости
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-root --no-interaction --no-ansi
 
 COPY . .
 
