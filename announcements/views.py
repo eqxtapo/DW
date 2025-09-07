@@ -18,37 +18,37 @@ from users.permissions import IsModer, IsOwner
 @method_decorator(
     name="list",
     decorator=swagger_auto_schema(
-        operation_description="Контроллер для получения списка всех пользователей"
+        operation_description="Контроллер для получения списка всех объявлений"
     ),
 )
 @method_decorator(
     name="retrieve",
     decorator=swagger_auto_schema(
-        operation_description="Контроллер для получения информации об конкретном пользователе"
+        operation_description="Контроллер для получения информации о конкретном объявлении"
     ),
 )
 @method_decorator(
     name="create",
     decorator=swagger_auto_schema(
-        operation_description="Контроллер для создания пользователя"
+        operation_description="Контроллер для создания объявления"
     ),
 )
 @method_decorator(
     name="update",
     decorator=swagger_auto_schema(
-        operation_description="Контроллер для обновления информации о пользователе"
+        operation_description="Контроллер для обновления информации об объявлении"
     ),
 )
 @method_decorator(
     name="partial_update",
     decorator=swagger_auto_schema(
-        operation_description="Контроллер для обновления определенной информации о пользователе"
+        operation_description="Контроллер для обновления определенной информации об объявлении"
     ),
 )
 @method_decorator(
     name="destroy",
     decorator=swagger_auto_schema(
-        operation_description="Контроллер для удаления пользователя"
+        operation_description="Контроллер для удаления объявления"
     ),
 )
 class AnnouncementViewSet(viewsets.ModelViewSet):
@@ -85,15 +85,17 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
             self.permission_classes = [AllowAny]
         elif self.action == "create":
             self.permission_classes = [IsAuthenticated]
-        elif self.action in "retrieve":
+        elif self.action == "retrieve":  # ИСПРАВЛЕНО: убрано 'in'
             self.permission_classes = [IsAuthenticated | IsModer | IsOwner]
         elif self.action in ["update", "partial_update", "destroy"]:
             self.permission_classes = [IsOwner | IsModer]
+        else:
+            self.permission_classes = [IsAuthenticated]  # Добавлено для других действий
 
         return super().get_permissions()
 
 
-class ReviewACreateAPIView(generics.CreateAPIView):
+class ReviewCreateAPIView(generics.CreateAPIView):  # ИСПРАВЛЕНО: опечатка в названии
 
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
@@ -105,7 +107,7 @@ class ReviewACreateAPIView(generics.CreateAPIView):
         review.save()
 
 
-class ReviewListPIView(generics.ListAPIView):
+class ReviewListAPIView(generics.ListAPIView):  # ИСПРАВЛЕНО: опечатка в названии
 
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
@@ -113,7 +115,7 @@ class ReviewListPIView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
 
-class ReviewUpdatePIView(generics.UpdateAPIView):
+class ReviewUpdateAPIView(generics.UpdateAPIView):  # ИСПРАВЛЕНО: опечатка в названии
 
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer

@@ -1,40 +1,47 @@
 version: "3.12"
 
 services:
-
   redis:
     container_name: redis
     image: redis:latest
     restart: on-failure
-    expose:
-      - "6379"
+    ports:
+      - "6379:6379"
 
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     environment:
-      - POSTGRES_DB=DW
+      - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=123123
+      - POSTGRES_PASSWORD=admin
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
 
   db:
+    container_name: db
     image: postgres:16
     environment:
-      - POSTGRES_DB=DW
+      - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=123123
+      - POSTGRES_PASSWORD=admin
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - ./postgres_data:/var/lib/postgresql/data/
+      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
     ports:
       - "5432:5432"
-
-volumes:
-    postgres_data:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 2s
+      retries: 5

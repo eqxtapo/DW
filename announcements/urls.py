@@ -4,10 +4,10 @@ from rest_framework.routers import DefaultRouter
 from announcements.apps import AnnouncementsConfig
 from announcements.views import (
     AnnouncementViewSet,
-    ReviewACreateAPIView,
+    ReviewCreateAPIView,
     ReviewDestroyAPIView,
-    ReviewListPIView,
-    ReviewUpdatePIView,
+    ReviewListAPIView,
+    ReviewUpdateAPIView,
 )
 
 app_name = AnnouncementsConfig.name
@@ -17,9 +17,9 @@ router = DefaultRouter()
 router.register("", AnnouncementViewSet)
 
 urlpatterns = [
-    path("review_create/", ReviewACreateAPIView.as_view(), name="review_create"),
-    path("review/<int:pk>/update", ReviewUpdatePIView.as_view(), name="review_update"),
-    path("review_list/", ReviewListPIView.as_view(), name="review_list"),
+    path("review_create/", ReviewCreateAPIView.as_view(), name="review_create"),
+    path("review/<int:pk>/update", ReviewUpdateAPIView.as_view(), name="review_update"),
+    path("review_list/", ReviewListAPIView.as_view(), name="review_list"),
     path(
         "review/<int:pk>/delete", ReviewDestroyAPIView.as_view(), name="review_delete"
     ),
